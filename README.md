@@ -1,2 +1,1 @@
-lesson_1
-========
+Tealeaf Lesson 1 Files.
