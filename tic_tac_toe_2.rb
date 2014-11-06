@@ -1,10 +1,13 @@
 require 'pry'
 
-computer_wins = false
-user_wins = false
+
 
 def init
   score_arr = Array.new(9, ' ')
+end
+
+def winning_arr
+  winning_lines = [[0,1,2], [3,4,5], [6,7,8], [6,4,2], [0,4,8], [0,3,6], [1,4,7], [2,5,8]]
 end
 
 def print_grid(score_arr = [])
@@ -25,12 +28,6 @@ def print_grid(score_arr = [])
 end
 
 
-# def show_prompt(score_arr)
-#   puts ""
-#   puts "Choose a position (from 1 to 9) to place a piece:"
-#
-# end
-
 
 def player_take_turn(score_arr)
   puts ""
@@ -41,18 +38,31 @@ def player_take_turn(score_arr)
 end
 
 
-def computer_take_turn(score_arr)
+def computer_take_turn(score_arr, winning_lines)
+  block_move = false
   computer_choices = []
+
+  winning_lines.each do |line|
+    # home grown AI to block from user becoming a winner - either lose or tie
+    if score_arr.values_at(*line).count('X') == 2
+       score_arr[line[0]] = 'O' if score_arr[line[0]] == ' '
+       score_arr[line[1]] = 'O' if score_arr[line[1]] == ' '
+       score_arr[line[2]] = 'O' if score_arr[line[2]] == ' '
+       block_move = true
+    end
+  end
+
   score_arr.each_with_index do |score, idx|
     if score == ' '
-      # score_arr[idx] = 'O'
-      # break
       computer_choices << idx
     end
   end
-  # binding.pry
-  computer_choices.shuffle!
-  score_arr[computer_choices[0]] = 'O'
+
+  if block_move == false
+    computer_choices.shuffle!
+    score_arr[computer_choices[0]] = 'O'
+  end
+
 end
 
 
@@ -61,78 +71,41 @@ end
 
 #declare winner
 
-def check_for_winner(score_arr)
+def check_for_winner(score_arr, winning_lines)
 
-  if score_arr[0] == 'X' && score_arr[1] == 'X' && score_arr[2] == 'X'
-    user_wins = true
+  winning_lines.each do |line|
 
-  elsif score_arr[3] == 'X' && score_arr[4] == 'X' && score_arr[5] == 'X'
-    user_wins = true
+    if score_arr.values_at(*line).count('X') == 3
 
-  elsif score_arr[6] == 'X' && score_arr[7] == 'X' && score_arr[8] == 'X'
-    user_wins = true
+      return "You Win!"
 
-  elsif score_arr[6] == 'X' && score_arr[4] == 'X' && score_arr[2] == 'X'
-    user_wins = true
+    elsif score_arr.values_at(*line).count('O') == 3
 
-  elsif score_arr[0] == 'X' && score_arr[4] == 'X' && score_arr[8] == 'X'
-      user_wins = true
+      return "I Win!"
 
-  elsif score_arr[0] == 'X' && score_arr[3] == 'X' && score_arr[6] == 'X'
-      user_wins = true
-
-  elsif score_arr[1] == 'X' && score_arr[4] == 'X' && score_arr[7] == 'X'
-      user_wins = true
-
-  elsif score_arr[2] == 'X' && score_arr[5] == 'X' && score_arr[8] == 'X'
-      user_wins = true
+    end
   end
-
-  if score_arr[0] == 'O' && score_arr[1] == 'O' && score_arr[2] == 'O'
-    computer_wins = true
-  elsif score_arr[3] == '0' && score_arr[4] == '0' && score_arr[5] == '0'
-    computer_wins = true
-
-  elsif score_arr[6] == 'O' && score_arr[7] == 'O' && score_arr[8] == 'O'
-    computer_wins = true
-
-  elsif score_arr[6] == 'O' && score_arr[4] == 'O' && score_arr[2] == 'O'
-    computer_wins = true
-
-  elsif score_arr[0] == 'O' && score_arr[4] == 'O' && score_arr[8] == 'O'
-      computer_wins = true
-
-  elsif score_arr[0] == 'O' && score_arr[3] == 'O' && score_arr[6] == 'O'
-      computer_wins = true
-
-  elsif score_arr[1] == 'O' && score_arr[4] == 'O' && score_arr[7] == 'O'
-      computer_wins = true
-
-  elsif score_arr[2] == 'O' && score_arr[5] == 'O' && score_arr[8] == 'O'
-      computer_wins = true
-  end
-
+  nil
 
 end
 
 
 score_arr = init
+winning_lines = winning_arr
 
 begin
   print_grid(score_arr)
-  #show_prompt(score_arr)
   player_take_turn(score_arr)
-  computer_take_turn(score_arr)
+#  print_grid(score_arr)
+  computer_take_turn(score_arr, winning_lines)
   print_grid(score_arr)
-  check_for_winner(score_arr)
+  winner = check_for_winner(score_arr, winning_lines)
+#  print_grid(score_arr)
+end until winner || score_arr.include?(" ") == false
 
 
-end until user_wins || computer_wins
-
-if user_wins
-  puts "You Win!"
-elsif computer_wins
-  puts "I Win!"
-elsif computer_wins && user_wins
-    puts "We tied!"
+if winner
+  puts winner
+else
+  puts "It's a tie."
 end
