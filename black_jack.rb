@@ -30,20 +30,20 @@ def remove_cards(master_deck, count)
 end
 
 
-def print_player_card(msg)
-  if msg[1] != 'face'
-    puts "You have a #{msg[1]} of #{msg[0]}"
+def print_player_card(card)
+  if card[1] != 'face'
+    puts "You have a #{card[1]} of #{card[0]}"
   else
-    puts "You have a #{msg[2]} of #{msg[0]}"
+    puts "You have a #{card[2]} of #{card[0]}"
   end
 end
 
 
-def print_dealer_card(msg)
-  if msg[1] != 'face'
-    puts "The dealer has a #{msg[1]} of #{msg[0]}"
+def print_dealer_card(card)
+  if card[1] != 'face'
+    puts "The dealer has a #{card[1]} of #{card[0]}"
   else
-    puts "The dealer has a #{msg[2]} of #{msg[0]}"
+    puts "The dealer has a #{card[2]} of #{card[0]}"
   end
 end
 
